@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { generate } from "random-words";
 import { NavigationProp } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface RegisterProps {
   route: { params: { pemail: string; ppassword: string } };
@@ -56,6 +57,8 @@ const Register = ({ route, navigation }: RegisterProps) => {
         status: "I am trying out this new app!",
         friends: [],
       });
+
+      await AsyncStorage.setItem("displayName", displayName);
 
       alert(
         "Success! Here is your friend phrase: " +

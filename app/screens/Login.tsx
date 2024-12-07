@@ -6,12 +6,15 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import React, { useState } from "react";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { NavigationProp } from "@react-navigation/native";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface LoginProps {
   route: { params: { pemail: string; ppassword: string } };
@@ -25,11 +28,17 @@ const Login = ({ route, navigation }: LoginProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const AUTH = FIREBASE_AUTH;
+    const DB = FIREBASE_DB;
 
   const signIn = async () => {
     setLoading(true);
     try {
-      const response = await signInWithEmailAndPassword(AUTH, email, password);
+        const response = await signInWithEmailAndPassword(AUTH, email, password);
+      const userDoc = await getDoc(doc(getFirestore(), "users", response.user.uid));
+      const displayName = userDoc.data()?.displayName;
+
+      await AsyncStorage.setItem("displayName", JSON.stringify(displayName));
+
       console.log(response);
       alert("Check your email.");
     } catch (e) {
