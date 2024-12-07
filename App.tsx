@@ -9,6 +9,7 @@ import { FIREBASE_AUTH } from './firebaseConfig';
 import "./global.css"
 
 import Login from './app/screens/Login';
+import Register from './app/screens/Register';
 import Home from './app/screens/Home';
 import Settings from './app/screens/Settings';
 
@@ -29,19 +30,34 @@ function HomeStackScreen() {
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
+      setLoading(false);
     });
-  })
+    return () => unsubscribe();
+  }, [])
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    )
+  }
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator>
         {user ? (
           <Stack.Screen name="HomeScreen" component={HomeStackScreen} options={{ headerShown: false }} />
         ) : (
-          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          <>
+                    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                    <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+          </>
+
         )}
       </Stack.Navigator>
     </NavigationContainer>

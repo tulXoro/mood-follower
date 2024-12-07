@@ -7,14 +7,21 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { NavigationProp } from "@react-navigation/native";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+interface LoginProps {
+  route: { params: { pemail: string; ppassword: string } };
+  navigation: NavigationProp<any, any>;
+}
+
+const Login = ({ route, navigation }: LoginProps) => {
+  const { pemail, ppassword } = route.params || { pemail: "", ppassword: "" };
+  const [email, setEmail] = useState(pemail);
+  const [password, setPassword] = useState(ppassword);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const AUTH = FIREBASE_AUTH;
@@ -23,24 +30,6 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await signInWithEmailAndPassword(AUTH, email, password);
-      console.log(response);
-      alert("Check your email.");
-    } catch (e) {
-      setError((e as any).message);
-      alert("Error: " + (e as any).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const signUp = async () => {
-    setLoading(true);
-    try {
-      const response = await createUserWithEmailAndPassword(
-        AUTH,
-        email,
-        password
-      );
       console.log(response);
       alert("Check your email.");
     } catch (e) {
@@ -73,7 +62,15 @@ const Login = () => {
         ) : (
           <>
             <Button title="Login" onPress={signIn} />
-            <Button title="Sign Up" onPress={signUp} />
+            <Button
+              title="Sign Up"
+              onPress={() =>
+                navigation.navigate("Register", {
+                  pemail: email,
+                  ppassword: password,
+                })
+              }
+            />
           </>
         )}
       </KeyboardAvoidingView>

@@ -10,7 +10,7 @@ interface SettingsProps {
 const Settings = ({ navigation }: SettingsProps) => {
   return (
     <View>
-      <Text>Settings</Text>
+
         <Button onPress={() => navigation.navigate('Home')} title="Go Home" />
             <Button onPress={() => FIREBASE_AUTH.signOut()} title="Logout" />
     </View>

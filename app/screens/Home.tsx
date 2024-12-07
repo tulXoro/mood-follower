@@ -1,20 +1,22 @@
-import { View, Text, Button } from 'react-native'
-import React from 'react'
-import HomeHeader from '../../components/homeHeader'
+import { View, Text, Button } from "react-native";
+import React from "react";
+import HomeHeader from "../../components/homeHeader";
+import { NavigationProp } from "@react-navigation/native";
 
 interface HomeProps {
-    navigation: any
-    }
-
-
-const Home = ( {navigation}: HomeProps ) => {
-  return (
-    <View>
-      <Text>Home</Text>
-        <HomeHeader />
-      <Button onPress={() => navigation.navigate('Settings')} title="Go to Settings" />
-    </View>
-  )
+  navigation: NavigationProp<any, any>;
 }
 
-export default Home
+const Home = ({ navigation }: HomeProps) => {
+  return (
+    <View>
+      <HomeHeader />
+      <Button
+        onPress={() => navigation.navigate("Settings")}
+        title="Go to Settings"
+      />
+    </View>
+  );
+};
+
+export default Home;
