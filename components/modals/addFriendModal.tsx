@@ -56,7 +56,7 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
             alert("No user found.");
         }
     } catch (e: any) {
-        alert("Error: " + e.message);
+        alert("Error in searching for a user: " + e.message);
     }
   };
 
@@ -85,9 +85,12 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
           });
 
           alert("Friend request sent!");
-
+          if (searchResult) {
+            setPendingInvites([...pendingInvites, {uid: searchResultUID, displayName: searchResult}]);
+          }
           setSearchResult(null);
           setSearchResultUID(null);
+          
 
         }
       } catch (e: any) {
@@ -114,7 +117,7 @@ const fetchPendingInvites = async () => {
     });
     setPendingInvites(requests);
   } catch (e: any) {
-    alert("Error: " + e.message);
+    alert("Error fetching invites: " + e.message);
   }
 
 }
@@ -137,7 +140,7 @@ const fetchPendingRequests = async () => {
     });
     setPendingRequests(invites);
   } catch (e: any) {
-    alert("Error: " + e.message);
+    alert("Error fetching requests: " + e.message);
   }
 }
 
@@ -167,6 +170,12 @@ const acceptFriendRequest = async (uid: string) => {
 
         alert("Friend added!");
         setPendingRequests(pendingRequests.filter((item) => item.uid !== uid));
+        const friends = await AsyncStorage.getItem('friends');
+        if(friends) {
+            await AsyncStorage.setItem('friends', JSON.stringify([...JSON.parse(friends), uid]));
+        } else {
+            await AsyncStorage.setItem('friends', JSON.stringify([uid]));
+        }
       } else {
         alert("User ID is undefined.");
       }
@@ -174,7 +183,7 @@ const acceptFriendRequest = async (uid: string) => {
       alert("No friend request found.");
     }
   } catch (e: any) {
-    alert("Error: " + e.message);
+    alert("Error accepting friend: " + e.message);
   }
   };
 
@@ -194,7 +203,7 @@ const rejectFriendInvite = async (uid: string) => {
     }
     
   } catch (e: any) {
-    alert("Error: " + e.message);
+    alert("Error rejecting friend invite: " + e.message);
   }
 
   };
@@ -214,7 +223,7 @@ const cancelFriendRequest = async (uid: string) => {
       alert("No friend request found.");
     }
   } catch (e: any) {
-    alert("Error: " + e.message);
+    alert("Error cancelling friend request: " + e.message);
   }
 
   };

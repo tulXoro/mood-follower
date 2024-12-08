@@ -1,17 +1,105 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
-import AddFriendModal from './modals/addFriendModal'
+import AddFriendModal from './modals/addFriendModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { doc, getDoc, deleteDoc, writeBatch, arrayRemove } from 'firebase/firestore';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../firebaseConfig';
 
-import FriendItem from './basic/friendItem'
+import FriendItem from './basic/friendItem';
 
-const friendsList = () => {
-    const [modalVisible, setModalVisible] = React.useState(false)
+const FriendsList = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  interface Friend {
+    uid: string;
+    displayName: string;
+    emoji: string;
+    status: string;
+  }
+
+  const [friends, setFriends] = useState<Friend[]>([]);
+
+  const fetchFriendDetails = async (friendUID: string) => {
+    try {
+      const friendDoc = await getDoc(doc(FIREBASE_DB, 'users', friendUID));
+      if (friendDoc.exists()) {
+        return {
+          uid: friendUID,
+          displayName: friendDoc.data().displayName,
+          emoji: friendDoc.data().emoji,
+          status: friendDoc.data().status,
+        };
+      } else {
+        console.log('No such document!');
+        return null;
+      }
+    } catch (e) {
+      console.error('Error fetching friend details: ', e);
+      return null;
+    }
+  };
+
+  const fetchFriends = async () => {
+    try {
+      const storedFriends = JSON.parse((await AsyncStorage.getItem('friends')) || '[]');
+      const friendsDetails = await Promise.all(storedFriends.map(fetchFriendDetails));
+      setFriends(friendsDetails.filter(friend => friend !== null));
+    } catch (e) {
+      console.error('Error fetching friaaends: ', e);
+    }
+  };
+
+  const removeFriend = async (friendUID: string) => {
+    console.log('Removing friend with UID: ', friendUID);
+  const userId = FIREBASE_AUTH.currentUser?.uid;
+  if (!userId) {
+    console.error('User ID is undefined');
+    return;
+  }
+
+  try {
+    // Update AsyncStorage
+    const storedFriends = JSON.parse((await AsyncStorage.getItem('friends')) || '[]');
+    const updatedFriends = storedFriends.filter((uid: string) => uid !== friendUID);
+    await AsyncStorage.setItem('friends', JSON.stringify(updatedFriends));
+    setFriends(friends.filter(friend => friend.uid !== friendUID));
+
+    // Update Firestore
+    const batch = writeBatch(FIREBASE_DB);
+    const userRef = doc(FIREBASE_DB, 'users', userId);
+    const friendRef = doc(FIREBASE_DB, 'users', friendUID);
+
+    batch.update(userRef, {
+      friends: arrayRemove(friendUID)
+    });
+    batch.update(friendRef, {
+      friends: arrayRemove(userId)
+    });
+
+    await batch.commit();
+    console.log('Friend removed successfully');
+  } catch (e: any) {
+    console.error('Error removing friend: ', e);
+  }
+  }
+
+  useEffect(() => {
+    fetchFriends();
+  }, []);
+
+  const renderItem = ({ item }: { item: Friend }) => (
+    <FriendItem uid={item.uid} pname={item.displayName} pemoji={item.emoji} pstatus={item.status} removeFriend={removeFriend} />
+  );
+
   return (
     <View className='w-full p-3 bg-sky-400 dark:bg-gray-800'>
       <Text className='bg-white'>Contacts</Text>
 
-      <FriendItem pname={null} pemoji={null} pstatus={null} />
+      <FlatList
+        data={friends}
+        keyExtractor={(item) => item.uid}
+        renderItem={renderItem}
+      />
 
       <TouchableOpacity
         className='bg-blue-500 p-2 m-2 rounded-md'
@@ -21,11 +109,11 @@ const friendsList = () => {
       </TouchableOpacity>
 
       <AddFriendModal 
-        visible={modalVisible} 
-        onClose={() => setModalVisible(false)} 
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
       />
     </View>
-  )
-}
+  );
+};
 
-export default friendsList
+export default FriendsList;
