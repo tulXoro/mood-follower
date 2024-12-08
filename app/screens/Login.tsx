@@ -36,8 +36,10 @@ const Login = ({ route, navigation }: LoginProps) => {
         const response = await signInWithEmailAndPassword(AUTH, email, password);
       const userDoc = await getDoc(doc(getFirestore(), "users", response.user.uid));
       const displayName = userDoc.data()?.displayName;
+      const friendPhrase = userDoc.data()?.friendPhrase;
 
       await AsyncStorage.setItem("displayName", JSON.stringify(displayName));
+      await AsyncStorage.setItem("friendPhrase", JSON.stringify(friendPhrase));
 
       console.log(response);
       alert("Check your email.");

@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from "react-native";
 
-import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, arrayUnion, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, arrayUnion, doc, setDoc, getDoc } from "firebase/firestore";
 import { FIREBASE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -36,6 +36,14 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
   const userId = FIREBASE_AUTH.currentUser?.uid;
 
   const handleSearch = async () => {
+
+    const friendPhrase = await AsyncStorage.getItem("friendPhrase");
+
+    if(friendPhrase === searchTerm) {
+        alert("You cannot add yourself as a friend.");
+        return;
+    }
+
     const q = query(collection(FIREBASE_DB, "users"), where("friendPhrase", "==", searchTerm));
     try {
         const querySnapshot = await getDocs(q);
@@ -52,153 +60,163 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
     }
   };
 
-  const handleAddFriend = async () => {
+  const handleInviteFriend = async () => {
     if (searchResultUID) {
-        const q = query(
-          collection(FIREBASE_DB, "friendRequests"),
-          where("from", "==", userId),
-          where("to", "==", searchResultUID)
-        );
-        try {
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                alert("Friend request already sent!");
-                return;
-            }
-        } catch (e: any) {
-            alert("Error!: " + e.message);
-            return;
-        }
+      const docId1 = `${userId}_${searchResultUID}`;
+      const docId2 = `${searchResultUID}_${userId}`;
   
-        const userRef = collection(FIREBASE_DB, "friendRequests");
-        try {
-            const userName = await AsyncStorage.getItem('displayName')
-            await addDoc(userRef, { from: userId, to: searchResultUID, fromName: userName, toName: searchResult });
+      const docRef1 = doc(FIREBASE_DB, "friendRequests", docId1);
+      const docRef2 = doc(FIREBASE_DB, "friendRequests", docId2);
+  
+      try {
+        const docSnap1 = await getDoc(docRef1);
+        const docSnap2 = await getDoc(docRef2);
+  
+        if (docSnap1.exists() || docSnap2.exists()) {
+          alert("Friend request already exists between users!");
+          return;
+        } else {
+          // Proceed with sending the friend request
+          const displayName = await AsyncStorage.getItem('displayName');
+          const userRef = doc(FIREBASE_DB, "friendRequests", docId1); // Use docId1 as the document ID
+          await setDoc(userRef, {
+            from: displayName,
+            to: searchResult,
+          });
+
           alert("Friend request sent!");
-        } catch (e: any) {
-          alert("Error: " + e.message + " " + searchResult);
+
+          setSearchResult(null);
+          setSearchResultUID(null);
+
         }
-      } else {
-        alert("No user found to add.");
+      } catch (e: any) {
+        alert("Error: " + e.message);
       }
-};
+    }
+  };
 
 const fetchPendingInvites = async () => {
-    const q = query(collection(FIREBASE_DB, "friendRequests"), where("from", "==", userId));
-    try {
-        const querySnapshot = await getDocs(q);
-        const requests: FriendRequest[] = [];
-        querySnapshot.forEach((doc) => {
-            let friend: FriendRequest = {
-                uid: doc.data().to,
-                displayName: doc.data().toName
-            };
-            requests.push(friend);
-        });
-        setPendingInvites(requests);
-    } catch (e: any) {
-        alert("Error: " + e.message);
-    }
+  const q = query(collection(FIREBASE_DB, "friendRequests"));
+  try {
+    const querySnapshot = await getDocs(q);
+    const requests: FriendRequest[] = [];
+    querySnapshot.forEach((doc) => {
+      const docId = doc.id;
+      const [fromUid, toUid] = docId.split('_');
+      if (fromUid === userId) {
+        let friend: FriendRequest = {
+          uid: toUid,
+          displayName: doc.data().to
+        };
+        requests.push(friend);
+      }
+    });
+    setPendingInvites(requests);
+  } catch (e: any) {
+    alert("Error: " + e.message);
+  }
 
 }
 
 const fetchPendingRequests = async () => {
-    const q = query(collection(FIREBASE_DB, "friendRequests"), where("to", "==", userId));
-    try {
-        const querySnapshot = await getDocs(q);
-        const invites: FriendRequest[] = [];
-        querySnapshot.forEach((doc) => {
-            let friend: FriendRequest = {
-                uid: doc.data().from,
-                displayName: doc.data().fromName
-            };
-            invites.push(friend);
-        });
-        setPendingRequests(invites);
-    } catch (e: any) {
-        alert("Error: " + e.message);
-    }
+  const q = query(collection(FIREBASE_DB, "friendRequests"));
+  try {
+    const querySnapshot = await getDocs(q);
+    const invites: FriendRequest[] = [];
+    querySnapshot.forEach((doc) => {
+      const docId = doc.id;
+      const [fromUid, toUid] = docId.split('_');
+      if (toUid === userId) {
+        let friend: FriendRequest = {
+          uid: fromUid,
+          displayName: doc.data().from
+        };
+        invites.push(friend);
+      }
+    });
+    setPendingRequests(invites);
+  } catch (e: any) {
+    alert("Error: " + e.message);
+  }
 }
 
 const acceptFriendRequest = async (uid: string) => {
-    const q = query(
-      collection(FIREBASE_DB, "friendRequests"),
-      where("from", "==", uid),
-      where("to", "==", userId)
-    );
-    try {
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const docSnapshot = querySnapshot.docs[0];
-  
-        // Update the friends field for both users
-        if (userId) {
-          const userRef = doc(FIREBASE_DB, "users", userId);
-          const friendRef = doc(FIREBASE_DB, "users", uid);
-    
-          await updateDoc(userRef, {
-            friends: arrayUnion(uid)
-          });
-    
-          await updateDoc(friendRef, {
-            friends: arrayUnion(userId)
-          });
-        } else {
-          alert("User ID is undefined.");
-        }
+  const docId1 = `${uid}_${userId}`;
+  const docRef1 = doc(FIREBASE_DB, "friendRequests", docId1);
+
+  try {
+    const docSnap1 = await getDoc(docRef1);
+
+    if (docSnap1.exists()) {
+      // Update the friends field for both users
+      if (userId) {
+        const userRef = doc(FIREBASE_DB, "users", userId);
+        const friendRef = doc(FIREBASE_DB, "users", uid);
+
+        await updateDoc(userRef, {
+          friends: arrayUnion(uid)
+        });
+
+        await updateDoc(friendRef, {
+          friends: arrayUnion(userId)
+        });
 
         // Delete the friend request document
-        await deleteDoc(docSnapshot.ref);
-  
+        await deleteDoc(docRef1);
+
         alert("Friend added!");
+        setPendingRequests(pendingRequests.filter((item) => item.uid !== uid));
       } else {
-        alert("No friend request found.");
+        alert("User ID is undefined.");
       }
-    } catch (e: any) {
-      alert("Error: " + e.message);
+    } else {
+      alert("No friend request found.");
     }
+  } catch (e: any) {
+    alert("Error: " + e.message);
+  }
   };
 
 const rejectFriendInvite = async (uid: string) => {
-    const q = query(
-      collection(FIREBASE_DB, "friendRequests"),
-      where("from", "==", uid),
-      where("to", "==", userId)
-    );
-    try {
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const docSnapshot = querySnapshot.docs[0];
-        await deleteDoc(docSnapshot.ref);
-        alert("Friend request rejected.");
-      } else {
-        alert("No friend request found.");
-      }
-    } catch (e: any) {
-      alert("Error: " + e.message);
+  const docId1 = `${uid}_${userId}`;
+  const docRef1 = doc(FIREBASE_DB, "friendRequests", docId1);
+
+  try {
+    const docSnap1 = await getDoc(docRef1);
+
+    if (docSnap1.exists()) {
+      await deleteDoc(docRef1);
+      alert("Friend request rejected.");
+      setPendingInvites(pendingInvites.filter((item) => item.uid !== uid));
+    } else {
+      alert("No friend request found.");
     }
+    
+  } catch (e: any) {
+    alert("Error: " + e.message);
+  }
+
   };
 
 const cancelFriendRequest = async (uid: string) => {
-    console.log("Canceling friend request to: " + uid);
-    const q = query(
-      collection(FIREBASE_DB, "friendRequests"),
-      where("from", "==", userId),
-      where("to", "==", uid)
-    );
-    try {
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const docSnapshot = querySnapshot.docs[0];
-        console.log(docSnapshot.ref);
-        await deleteDoc(docSnapshot.ref);
-        alert("Friend request canceled.");
-      } else {
-        alert("No friend request found.");
-      }
-    } catch (e: any) {
-      alert("Error: " + e.message);
+  const docId1 = `${userId}_${uid}`;
+  const docRef1 = doc(FIREBASE_DB, "friendRequests", docId1);
+
+  try {
+    const docSnap1 = await getDoc(docRef1);
+
+    if (docSnap1.exists()) {
+      await deleteDoc(docRef1);
+      alert("Friend request canceled.");
+      setPendingRequests(pendingRequests.filter((item) => item.uid !== uid));
+    } else {
+      alert("No friend request found.");
     }
+  } catch (e: any) {
+    alert("Error: " + e.message);
+  }
+
   };
 
   useEffect(() => { 
@@ -283,7 +301,7 @@ const cancelFriendRequest = async (uid: string) => {
                 {searchResult && (
                   <View className="mt-4">
                     <Text className="text-black">{searchResult}</Text>
-                    <Button title="Add Friend" onPress={handleAddFriend} />
+                    <Button title="Add Friend" onPress={handleInviteFriend} />
                   </View>
                 )}
               </View>

@@ -59,6 +59,7 @@ const Register = ({ route, navigation }: RegisterProps) => {
       });
 
       await AsyncStorage.setItem("displayName", displayName);
+      await AsyncStorage.setItem("friendPhrase", JSON.stringify(friendPhrase));
 
       alert(
         "Success! Here is your friend phrase: " +
