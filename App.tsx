@@ -1,9 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
+import { useColorScheme } from 'nativewind';
 import { onAuthStateChanged, User } from 'firebase/auth';
+
+
+
 import { FIREBASE_AUTH } from './firebaseConfig';
 
 import "./global.css"
@@ -31,7 +35,8 @@ function HomeStackScreen() {
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const { colorScheme, setColorScheme } = useColorScheme();
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
@@ -48,7 +53,10 @@ export default function App() {
     )
   }
   return (
-    <NavigationContainer>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+
+      <NavigationContainer >
+      {/* <StatusBar style="auto" /> */}
       <Stack.Navigator>
         {user ? (
           <Stack.Screen name="HomeScreen" component={HomeStackScreen} options={{ headerShown: false }} />
@@ -61,6 +69,8 @@ export default function App() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+      </ThemeProvider>
+
   );
 }
 
