@@ -1,9 +1,9 @@
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 import EmojiPickerModal from "./modals/emojiPickerModal";
 
 const homeHeader = () => {

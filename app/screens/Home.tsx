@@ -10,6 +10,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, getDoc } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
 
+import TestWidget from "../../components/testWidget";
+
 interface HomeProps {
   navigation: NavigationProp<any, any>;
 }
@@ -69,6 +71,8 @@ const Home = ({ navigation }: HomeProps) => {
         title="Go to Settings"
       />
         <FriendsList />
+
+        <TestWidget />
     </View>
   );
 };
