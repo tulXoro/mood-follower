@@ -19,9 +19,37 @@ const FriendsList = () => {
 
   const fetchFriends = async () => {
     try {
-      const storedFriends = JSON.parse((await AsyncStorage.getItem('friends')) || '[]');
-      // const friendsDetails = await Promise.all(storedFriends.map(fetchFriendDetails));
-      // setFriends(friendsDetails.filter(friend => friend !== null));
+      const storedFriends = JSON.parse((await AsyncStorage.getItem('friendUIDs')) || '[]');
+      setFriends(storedFriends.map((uid: string) => ({ uid })));
+
+      const userId = FIREBASE_AUTH.currentUser?.uid;
+      if (!userId) {
+        console.error('User ID is undefined');
+        return;
+      }
+
+      const userDoc = await getDoc(doc(FIREBASE_DB, 'users', userId));
+      const firestoreFriends = userDoc.data()?.friends || [];
+      const friendsToAdd = firestoreFriends.filter((uid: string) => !storedFriends.includes(uid));
+      const friendsToRemove = storedFriends.filter((uid: string) => !firestoreFriends.includes(uid));
+
+      const batch = writeBatch(FIREBASE_DB);
+      friendsToAdd.forEach((uid: string) => {
+        batch.update(doc(FIREBASE_DB, 'users', userId), {
+          friends: arrayRemove(uid)
+        });
+      });
+
+      friendsToRemove.forEach((uid: string) => {
+        batch.update(doc(FIREBASE_DB, 'users', userId), {
+          friends: arrayRemove(uid)
+        });
+      });
+
+      await batch.commit();
+      await AsyncStorage.setItem('friendUIDs', JSON.stringify(firestoreFriends));
+
+
     } catch (e) {
       console.error('Error fetching friaaends: ', e);
     }
@@ -63,6 +91,7 @@ const FriendsList = () => {
 
   useEffect(() => {
     fetchFriends();
+    console.log('FriendsList mounted');
   }, []);
 
   const renderItem = ({ item }: { item: Friend }) => (
