@@ -1,18 +1,44 @@
 import { View, Text,Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
+import { onSnapshot, collection, doc } from 'firebase/firestore'
+
+import { FIREBASE_DB } from '../../firebaseConfig'
+
 
 interface friendItemProps {
   uid: string
-    pname: string | null
-    pemoji: string | null
-    pstatus: string | null
+
     removeFriend: (uid: string) => void
     }
 
-const friendItem = ( {uid, pname, pemoji, pstatus, removeFriend}:friendItemProps ) => {
-    const [name, setName] = React.useState(pname);
-    const [emoji, setEmoji] = React.useState(pemoji);
-    const [status, setStatus] = React.useState(pstatus);
+const friendItem = ( {uid, removeFriend}:friendItemProps ) => {
+    const [name, setName] = React.useState('');
+    const [emoji, setEmoji] = React.useState('');
+    const [status, setStatus] = React.useState('');
+    const unsubscribeRef = useRef<() => void>(() => {});
+
+    const fetchDetails = async () => {
+        try {
+            const friendDoc = await doc(FIREBASE_DB, 'users', uid);
+            unsubscribeRef.current = onSnapshot(friendDoc, (doc) => {
+              setName(doc.data()?.displayName)
+              setStatus(doc.data()?.status)
+              setEmoji(doc.data()?.emoji)
+            })
+        } catch (e) {
+            console.error('Error fetching friend details: ', e);
+        }
+    }
+
+    useEffect(() => {
+        fetchDetails()
+        return () => {
+            unsubscribeRef.current()
+        }
+    }, [])
+
+
+  
   return (
     <View>
     <Image />

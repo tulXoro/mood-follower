@@ -25,6 +25,14 @@ interface FriendRequest {
     displayName: string;
 }
 
+interface Friend {
+  uid: string;
+  displayName: string;
+  emoji: string;
+  status: string;
+}
+
+
 const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResult, setSearchResult] = useState<string | null>("");
@@ -174,7 +182,15 @@ const acceptFriendRequest = async (uid: string) => {
         if(friends) {
             await AsyncStorage.setItem('friends', JSON.stringify([...JSON.parse(friends), uid]));
         } else {
-            await AsyncStorage.setItem('friends', JSON.stringify([uid]));
+          const docSnap2 = await getDoc(friendRef);
+
+          const friend: Friend = {
+            uid: uid,
+            displayName: docSnap1.data().from,
+            emoji: docSnap2.data()?.emoji || '',
+            status: docSnap2.data()?.status || ''
+          }
+            await AsyncStorage.setItem('friends', JSON.stringify([friend]));
         }
       } else {
         alert("User ID is undefined.");

@@ -17,7 +17,9 @@ import Register from './app/screens/Register';
 import Home from './app/screens/Home';
 import Settings from './app/screens/Settings';
 
-
+if (__DEV__) {
+  require("./ReactotronConfig");
+}
 
 const Stack = createNativeStackNavigator();
 

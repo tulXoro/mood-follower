@@ -12,38 +12,16 @@ const FriendsList = () => {
   const [modalVisible, setModalVisible] = useState(false);
   interface Friend {
     uid: string;
-    displayName: string;
-    emoji: string;
-    status: string;
+
   }
 
   const [friends, setFriends] = useState<Friend[]>([]);
 
-  const fetchFriendDetails = async (friendUID: string) => {
-    try {
-      const friendDoc = await getDoc(doc(FIREBASE_DB, 'users', friendUID));
-      if (friendDoc.exists()) {
-        return {
-          uid: friendUID,
-          displayName: friendDoc.data().displayName,
-          emoji: friendDoc.data().emoji,
-          status: friendDoc.data().status,
-        };
-      } else {
-        console.log('No such document!');
-        return null;
-      }
-    } catch (e) {
-      console.error('Error fetching friend details: ', e);
-      return null;
-    }
-  };
-
   const fetchFriends = async () => {
     try {
       const storedFriends = JSON.parse((await AsyncStorage.getItem('friends')) || '[]');
-      const friendsDetails = await Promise.all(storedFriends.map(fetchFriendDetails));
-      setFriends(friendsDetails.filter(friend => friend !== null));
+      // const friendsDetails = await Promise.all(storedFriends.map(fetchFriendDetails));
+      // setFriends(friendsDetails.filter(friend => friend !== null));
     } catch (e) {
       console.error('Error fetching friaaends: ', e);
     }
@@ -88,7 +66,7 @@ const FriendsList = () => {
   }, []);
 
   const renderItem = ({ item }: { item: Friend }) => (
-    <FriendItem uid={item.uid} pname={item.displayName} pemoji={item.emoji} pstatus={item.status} removeFriend={removeFriend} />
+    <FriendItem uid={item.uid} removeFriend={removeFriend} />
   );
 
   return (
