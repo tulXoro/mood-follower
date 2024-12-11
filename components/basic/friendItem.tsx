@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useRef } from "react";
-import { onSnapshot, collection, doc } from "firebase/firestore";
+import { onSnapshot, doc } from "firebase/firestore";
 
 import { FIREBASE_DB } from "../../firebaseConfig";
 

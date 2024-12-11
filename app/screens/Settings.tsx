@@ -1,7 +1,7 @@
 import { View, Text, Button } from "react-native";
 import React, { useEffect } from "react";
 import { NavigationProp } from "@react-navigation/native";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
+import { FIREBASE_AUTH } from "../../firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface SettingsProps {

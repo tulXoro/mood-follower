@@ -5,8 +5,6 @@ import AddFriendModal from "./modals/addFriendModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   doc,
-  getDoc,
-  deleteDoc,
   writeBatch,
   arrayRemove,
 } from "firebase/firestore";

@@ -7,7 +7,6 @@ import {
   Button,
   FlatList,
   TouchableOpacity,
-  useColorScheme,
 } from "react-native";
 
 import {
