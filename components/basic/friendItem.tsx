@@ -31,9 +31,9 @@ const friendItem = ({ uid, removeFriend }: friendItemProps) => {
 
   useEffect(() => {
     fetchDetails();
-    console.log("FriendItem mounted");
+
     return () => {
-      console.log("FriendItem unmounted");
+
       unsubscribeRef.current();
     };
   }, []);

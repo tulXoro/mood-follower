@@ -99,7 +99,6 @@ const FriendsList = () => {
       });
 
       await batch.commit();
-      console.log("Friend removed successfully");
     } catch (e: any) {
       console.error("Error removing friend: ", e);
     }
@@ -107,7 +106,6 @@ const FriendsList = () => {
 
   useEffect(() => {
     fetchFriends();
-    console.log("FriendsList mounted");
   }, []);
 
   const renderItem = ({ item }: { item: Friend }) => (
