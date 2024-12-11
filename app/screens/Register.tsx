@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
-    addDoc,
+  addDoc,
   collection,
   doc,
   getDocs,
@@ -35,7 +35,6 @@ const Register = ({ route, navigation }: RegisterProps) => {
   const [error, setError] = useState(false);
   const AUTH = FIREBASE_AUTH;
   const DB = FIREBASE_DB;
-
 
   const signUp = async () => {
     setLoading(true);

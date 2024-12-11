@@ -1,58 +1,59 @@
-import { View, Text,Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useRef } from 'react'
-import { onSnapshot, collection, doc } from 'firebase/firestore'
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { onSnapshot, collection, doc } from "firebase/firestore";
 
-import { FIREBASE_DB } from '../../firebaseConfig'
-
+import { FIREBASE_DB } from "../../firebaseConfig";
 
 interface friendItemProps {
-  uid: string
+  uid: string;
 
-    removeFriend: (uid: string) => void
+  removeFriend: (uid: string) => void;
+}
+
+const friendItem = ({ uid, removeFriend }: friendItemProps) => {
+  const [name, setName] = React.useState("");
+  const [emoji, setEmoji] = React.useState("");
+  const [status, setStatus] = React.useState("");
+  const unsubscribeRef = useRef<() => void>(() => {});
+
+  const fetchDetails = async () => {
+    try {
+      const friendDoc = await doc(FIREBASE_DB, "users", uid);
+      unsubscribeRef.current = onSnapshot(friendDoc, (doc) => {
+        setName(doc.data()?.displayName);
+        setStatus(doc.data()?.status);
+        setEmoji(doc.data()?.emoji);
+      });
+    } catch (e) {
+      console.error("Error fetching friend details: ", e);
     }
+  };
 
-const friendItem = ( {uid, removeFriend}:friendItemProps ) => {
-    const [name, setName] = React.useState('');
-    const [emoji, setEmoji] = React.useState('');
-    const [status, setStatus] = React.useState('');
-    const unsubscribeRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    fetchDetails();
+    console.log("FriendItem mounted");
+    return () => {
+      console.log("FriendItem unmounted");
+      unsubscribeRef.current();
+    };
+  }, []);
 
-    const fetchDetails = async () => {
-        try {
-            const friendDoc = await doc(FIREBASE_DB, 'users', uid);
-            unsubscribeRef.current = onSnapshot(friendDoc, (doc) => {
-              setName(doc.data()?.displayName)
-              setStatus(doc.data()?.status)
-              setEmoji(doc.data()?.emoji)
-            })
-        } catch (e) {
-            console.error('Error fetching friend details: ', e);
-        }
-    }
-
-    useEffect(() => {
-        fetchDetails()
-        console.log('FriendItem mounted')
-        return () => {
-            console.log('FriendItem unmounted')
-            unsubscribeRef.current()
-        }
-    }, [])
-
-
-  
   return (
     <View>
-    <Image />
+      <Image />
       <Text>{name}</Text>
       <Text>{emoji}</Text>
       <Text>{status}</Text>
       <Text></Text>
-      <TouchableOpacity onPress={() => {removeFriend(uid)}}>
+      <TouchableOpacity
+        onPress={() => {
+          removeFriend(uid);
+        }}
+      >
         <Text>Remove</Text>
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
-export default friendItem
+export default friendItem;
