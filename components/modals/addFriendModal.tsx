@@ -39,9 +39,6 @@ interface FriendRequest {
 
 interface Friend {
   uid: string;
-  displayName: string;
-  emoji: string;
-  status: string;
 }
 
 const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
@@ -193,10 +190,10 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
           setPendingRequests(
             pendingRequests.filter((item) => item.uid !== uid)
           );
-          const friends = await AsyncStorage.getItem("friends");
+          const friends = await AsyncStorage.getItem("friendUIDs");
           if (friends) {
             await AsyncStorage.setItem(
-              "friends",
+              "friendUIDs",
               JSON.stringify([...JSON.parse(friends), uid])
             );
           } else {
@@ -204,11 +201,8 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
 
             const friend: Friend = {
               uid: uid,
-              displayName: docSnap1.data().from,
-              emoji: docSnap2.data()?.emoji || "",
-              status: docSnap2.data()?.status || "",
             };
-            await AsyncStorage.setItem("friends", JSON.stringify([friend]));
+            await AsyncStorage.setItem("friendUIDs", JSON.stringify([friend]));
           }
         } else {
           alert("User ID is undefined.");

@@ -18,66 +18,49 @@ const homeHeader = () => {
     if (userId) {
       const userRef = doc(FIREBASE_DB, "users", userId);
       await updateDoc(userRef, { emoji: mood });
-      await AsyncStorage.setItem(`emoji`, mood); // Cache the emoji
+      await AsyncStorage.setItem(`emoji`, mood);
     }
   };
 
-  const fetchEmoji = async () => {
+  const fetchSelfData = async () => {
     if (userId) {
-      const cachedEmoji = await AsyncStorage.getItem(`emoji_${userId}`);
-      if (cachedEmoji) {
-        setMood(cachedEmoji);
-      } else {
+      let emoji = await AsyncStorage.getItem(`emoji`);
+      let stat = await AsyncStorage.getItem(`status`);
+      if (!emoji || !stat) {
         const userRef = doc(FIREBASE_DB, "users", userId);
         const userDoc = await getDoc(userRef);
+
         if (userDoc.exists()) {
-          const emoji = userDoc.data().emoji || "Pick an emoji";
-          setMood(userDoc.data().emoji);
-          await AsyncStorage.setItem(`emoji`, emoji);
+          emoji = userDoc.data().emoji || "Pick an emoji";
+          stat = userDoc.data().status || "";
+          await AsyncStorage.setItem(`emoji`, emoji || "Pick an emoji");
+          await AsyncStorage.setItem(`status`, stat || "");
         }
       }
+      setMood(emoji || "Pick an emoji");
+      setStatus(stat || "");
     }
   };
 
-  const fetchStatus = async () => {
-    if (userId) {
-      const cachedStatus = await AsyncStorage.getItem(`status`);
-      if (cachedStatus) {
-        setStatus(cachedStatus);
-      } else {
-        const userRef = doc(FIREBASE_DB, "users", userId);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          const status = userDoc.data().status || "";
-          setStatus(status);
-          await AsyncStorage.setItem(`status`, status);
-        }
-      }
-    }
-  };
+
 
   const handleSetStatus = async (status: string) => {
     if (userId) {
-      console.log("Updating status...");
+
       try {
         const userRef = doc(FIREBASE_DB, "users", userId);
         await updateDoc(userRef, { status: status });
         await AsyncStorage.setItem("status", status); // Cache the status
-        console.log("Status updated successfully");
       } catch (e: any) {
         console.error("Error updating status: ", e.message);
         alert("Error updating status: " + e.message);
       }
-    } else {
-      console.error("User ID is undefined");
-      alert("User ID is undefined");
     }
   };
 
   useEffect(() => {
-    fetchEmoji();
-    fetchStatus();
-  }, [userId]);
+    fetchSelfData();
+  }, []);
 
   return (
     <View className="flex justify-start items-center p-8 min-h-15">

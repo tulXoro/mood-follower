@@ -14,77 +14,31 @@ import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 
 import FriendItem from "./basic/friendItem";
 
-const FriendsList = () => {
+interface FriendsListProps {
+  pfriendUIDList: string[];
+}
+
+const FriendsList = ({ pfriendUIDList } : FriendsListProps) => {
   const [modalVisible, setModalVisible] = useState(false);
-  interface Friend {
-    uid: string;
-  }
-
-  const [friends, setFriends] = useState<Friend[]>([]);
-
-  const fetchFriends = async () => {
-    try {
-      const storedFriends = JSON.parse(
-        (await AsyncStorage.getItem("friendUIDs")) || "[]"
-      );
-      setFriends(storedFriends.map((uid: string) => ({ uid })));
-
-      const userId = FIREBASE_AUTH.currentUser?.uid;
-      if (!userId) {
-        console.error("User ID is undefined");
-        return;
-      }
-
-      const userDoc = await getDoc(doc(FIREBASE_DB, "users", userId));
-      const firestoreFriends = userDoc.data()?.friends || [];
-      const friendsToAdd = firestoreFriends.filter(
-        (uid: string) => !storedFriends.includes(uid)
-      );
-      const friendsToRemove = storedFriends.filter(
-        (uid: string) => !firestoreFriends.includes(uid)
-      );
-
-      const batch = writeBatch(FIREBASE_DB);
-      friendsToAdd.forEach((uid: string) => {
-        batch.update(doc(FIREBASE_DB, "users", userId), {
-          friends: arrayRemove(uid),
-        });
-      });
-
-      friendsToRemove.forEach((uid: string) => {
-        batch.update(doc(FIREBASE_DB, "users", userId), {
-          friends: arrayRemove(uid),
-        });
-      });
-
-      await batch.commit();
-      await AsyncStorage.setItem(
-        "friendUIDs",
-        JSON.stringify(firestoreFriends)
-      );
-    } catch (e) {
-      console.error("Error fetching friaaends: ", e);
-    }
-  };
+  const [friendUIDList, setFriendsList] = useState(pfriendUIDList);
 
   const removeFriend = async (friendUID: string) => {
     console.log("Removing friend with UID: ", friendUID);
     const userId = FIREBASE_AUTH.currentUser?.uid;
     if (!userId) {
-      console.error("User ID is undefined");
       return;
     }
 
     try {
       // Update AsyncStorage
       const storedFriends = JSON.parse(
-        (await AsyncStorage.getItem("friends")) || "[]"
+        (await AsyncStorage.getItem("friendUIDs")) || "[]"
       );
       const updatedFriends = storedFriends.filter(
         (uid: string) => uid !== friendUID
       );
-      await AsyncStorage.setItem("friends", JSON.stringify(updatedFriends));
-      setFriends(friends.filter((friend) => friend.uid !== friendUID));
+      await AsyncStorage.setItem("friendUIDs", JSON.stringify(updatedFriends));
+      setFriendsList(friendUIDList.filter((uid: string) => uid !== friendUID));
 
       // Update Firestore
       const batch = writeBatch(FIREBASE_DB);
@@ -105,10 +59,10 @@ const FriendsList = () => {
   };
 
   useEffect(() => {
-    fetchFriends();
+    // fetchFriends();
   }, []);
 
-  const renderItem = ({ item }: { item: Friend }) => (
+  const renderItem = ({ item }: { item: { uid: string } }) => (
     <FriendItem uid={item.uid} removeFriend={removeFriend} />
   );
 
@@ -117,7 +71,7 @@ const FriendsList = () => {
       <Text className="bg-white">Contacts</Text>
 
       <FlatList
-        data={friends}
+        data={friendUIDList.map(uid => ({ uid }))}
         keyExtractor={(item) => item.uid}
         renderItem={renderItem}
       />

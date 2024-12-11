@@ -12,6 +12,15 @@ const Settings = ({ navigation }: SettingsProps) => {
   const [displayName, setDisplayName] = React.useState<string | null>(null);
   const [friendPhrase, setFriendPhrase] = React.useState<string | null>(null);
 
+  const signOut = async () => {
+    try {
+      await FIREBASE_AUTH.signOut();
+      await AsyncStorage.clear();
+    } catch (e) {
+      console.error("Error signing out: ", e);
+    }
+  }
+
   useEffect(() => {
     AsyncStorage.getItem("displayName").then((value) => setDisplayName(value));
     AsyncStorage.getItem("friendPhrase").then((value) =>
@@ -28,7 +37,7 @@ const Settings = ({ navigation }: SettingsProps) => {
         <Text>{friendPhrase}</Text>
       </View>
       <Button onPress={() => navigation.navigate("Home")} title="Go Home" />
-      <Button onPress={() => FIREBASE_AUTH.signOut()} title="Logout" />
+      <Button onPress={signOut} title="Logout" />
     </View>
   );
 };
