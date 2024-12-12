@@ -1,1 +1,2 @@
 [] Reactions
+[] Add widget tool
