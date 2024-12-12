@@ -19,28 +19,11 @@ interface HomeProps {
 const Home = ({ navigation }: HomeProps) => {
   const [friends, setFriends] = React.useState<string[]>([]);
   const [loadingFriends, setLoadingFriends] = React.useState(true);
+
   const syncData = async () => {
     const userId = FIREBASE_AUTH.currentUser?.uid;
     if (!userId) {
       throw new Error("User ID is undefined");
-    }
-    try {
-      const storedFriends = JSON.parse(await AsyncStorage.getItem("friendUIDs") || "[]");
-      setFriends(storedFriends);
-      setLoadingFriends(false);
-
-      const userDoc = await getDoc(doc(FIREBASE_DB, "users", userId));
-      await AsyncStorage.setItem("displayName", userDoc.data()?.displayName);
-      await AsyncStorage.setItem("friendPhrase", userDoc.data()?.friendPhrase);
-      await AsyncStorage.setItem("emoji", userDoc.data()?.emoji);
-      await AsyncStorage.setItem("status", userDoc.data()?.status);
-      await AsyncStorage.setItem("friendUIDs", JSON.stringify(userDoc.data()?.friends));
-      setFriends(userDoc.data()?.friends);
-      console.log("Friends: ", userDoc.data()?.friends);
-    } catch (e: any) {
-      alert("Error: " + e.message);
-    } finally {
-      setLoadingFriends(false);
     }
   };
 
@@ -56,12 +39,7 @@ const Home = ({ navigation }: HomeProps) => {
         onPress={() => navigation.navigate("Settings")}
         title="Go to Settings"
       />
-      {
-        loadingFriends ? (
-          <Text>Loading friends...</Text>
-        ) :
-          <FriendsList pfriendUIDList={friends} />
-      }
+      <FriendsList />
 
 
       <TestWidget />

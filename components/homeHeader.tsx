@@ -8,10 +8,11 @@ import EmojiPickerModal from "./modals/emojiPickerModal";
 
 const homeHeader = () => {
   const [showEmoji, setShowEmoji] = useState(false);
-  const [status, setStatus] = useState("");
-  const [mood, setMood] = useState("");
+  const [status, setStatus] = useState("I am new here!");
+  const [mood, setMood] = useState("👋");
   const userId = FIREBASE_AUTH.currentUser?.uid;
 
+  // TODO: reset reactions when user sets mood or status
   const handleMood = async (mood: string) => {
     setMood(mood);
     setShowEmoji(false);
@@ -31,13 +32,13 @@ const homeHeader = () => {
         const userDoc = await getDoc(userRef);
 
         if (userDoc.exists()) {
-          emoji = userDoc.data().emoji || "Pick an emoji";
+          emoji = userDoc.data().emoji || "👋";
           stat = userDoc.data().status || "";
-          await AsyncStorage.setItem(`emoji`, emoji || "Pick an emoji");
-          await AsyncStorage.setItem(`status`, stat || "");
+          await AsyncStorage.setItem(`emoji`, emoji || "👋");
+          await AsyncStorage.setItem(`status`, stat || "I am new here!");
         }
       }
-      setMood(emoji || "Pick an emoji");
+      setMood(emoji || "👋");
       setStatus(stat || "");
     }
   };

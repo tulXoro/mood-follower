@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import AddFriendModal from "./modals/addFriendModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,18 +7,17 @@ import {
   doc,
   writeBatch,
   arrayRemove,
+  onSnapshot,
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 
 import FriendItem from "./basic/friendItem";
 
-interface FriendsListProps {
-  pfriendUIDList: string[];
-}
 
-const FriendsList = ({ pfriendUIDList } : FriendsListProps) => {
+const FriendsList = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [friendUIDList, setFriendsList] = useState(pfriendUIDList);
+  const [friendUIDList, setFriendsList] = useState([] as string[]);
+  const unsubscribeRef = useRef<() => void>(() => {});
 
   const removeFriend = async (friendUID: string) => {
     console.log("Removing friend with UID: ", friendUID);
@@ -56,8 +55,24 @@ const FriendsList = ({ pfriendUIDList } : FriendsListProps) => {
     }
   };
 
+  const fetchFriends = async () => {
+    // get a snapshot of the user's friends
+    const userId = FIREBASE_AUTH.currentUser?.uid;
+    if (!userId) {
+      return;
+    }
+    unsubscribeRef.current = onSnapshot(doc(FIREBASE_DB, "users", userId), (doc) => {
+      const friends = doc.data()?.friends || [];
+      setFriendsList(friends);
+    });
+  }
+
   useEffect(() => {
-    // fetchFriends();
+    fetchFriends();
+    return () => {
+      unsubscribeRef.current();
+    };
+
   }, []);
 
   const renderItem = ({ item }: { item: { uid: string } }) => (
