@@ -53,7 +53,7 @@ const emojiPickerModal = ({ visible, onClose, onSelectEmoji }: EmojiPickerModalP
     );
   return (
     <Modal
-    animationType="slide"
+    animationType="fade"
     transparent={true}
     visible={visible}
     onRequestClose={onClose}
@@ -69,7 +69,7 @@ const emojiPickerModal = ({ visible, onClose, onSelectEmoji }: EmojiPickerModalP
           {selectedEmoji ? (
             <Text className="text-4xl text-center">{selectedEmoji}</Text>
           ) : (
-            <Text className={`text-4xl text-center `}>No Emoji Selected</Text>
+            <Text className={`text-4xl text-center text-red-950 bg-slate-600 p-3`}>No Emoji Selected</Text>
           )}
         </View>
 

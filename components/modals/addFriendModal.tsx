@@ -263,7 +263,7 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
     <Modal
       visible={visible}
       transparent={true}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <View

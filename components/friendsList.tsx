@@ -19,6 +19,8 @@ const FriendsList = () => {
   const [friendUIDList, setFriendsList] = useState([] as string[]);
   const unsubscribeRef = useRef<() => void>(() => {});
 
+  // NOTE:
+  // Because we are listening on a snapshot, there is no need to update the friends list
   const removeFriend = async (friendUID: string) => {
     console.log("Removing friend with UID: ", friendUID);
     const userId = FIREBASE_AUTH.currentUser?.uid;
@@ -27,16 +29,6 @@ const FriendsList = () => {
     }
 
     try {
-      // Update AsyncStorage
-      const storedFriends = JSON.parse(
-        (await AsyncStorage.getItem("friendUIDs")) || "[]"
-      );
-      const updatedFriends = storedFriends.filter(
-        (uid: string) => uid !== friendUID
-      );
-      await AsyncStorage.setItem("friendUIDs", JSON.stringify(updatedFriends));
-      setFriendsList(friendUIDList.filter((uid: string) => uid !== friendUID));
-
       // Update Firestore
       const batch = writeBatch(FIREBASE_DB);
       const userRef = doc(FIREBASE_DB, "users", userId);
@@ -81,7 +73,7 @@ const FriendsList = () => {
 
   return (
     <View className="w-full p-3 bg-sky-400 dark:bg-gray-800">
-      <Text className="bg-white">Contacts</Text>
+      <Text className="text-black dark:text-white">Contacts</Text>
 
       <FlatList
         data={friendUIDList.map(uid => ({ uid }))}

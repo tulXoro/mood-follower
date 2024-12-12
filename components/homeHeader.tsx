@@ -90,6 +90,7 @@ const homeHeader = () => {
           className="w-3/4 p-2 m-2 border-2 rounded-lg"
           placeholder="What's on your mind?"
           value={status}
+                  returnKeyType="send"
           onChangeText={setStatus}
         />
         <TouchableOpacity onPress={() => handleSetStatus(status)}>
