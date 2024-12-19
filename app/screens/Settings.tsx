@@ -30,11 +30,11 @@ const Settings = ({ navigation }: SettingsProps) => {
 
   return (
     <View>
-      <View>
-        <Text>Display Name:</Text>
-        <Text>{displayName}</Text>
-        <Text>Friend Phrase:</Text>
-        <Text>{friendPhrase}</Text>
+      <View className="flex flex-col items-center gap-2 p-2">
+        <Text className="text-lg">Display Name:</Text>
+        <Text className="border p-2">{displayName}</Text>
+        <Text className="text-lg">Friend Phrase:</Text>
+        <Text className="text-orange-600">{friendPhrase}</Text>
       </View>
       <Button onPress={() => navigation.navigate("Home")} title="Go Home" />
       <Button onPress={signOut} title="Logout" />

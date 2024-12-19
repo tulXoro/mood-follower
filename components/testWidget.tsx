@@ -20,7 +20,7 @@ const testWidget = () => {
       console.log({error});
     }
     // Android
-    SharedStorage.set(JSON.stringify({text}));
+    SharedStorage.set( JSON.stringify({text}));
   };
 
   return (

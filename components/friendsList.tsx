@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, NativeModules } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 
 import AddFriendModal from "./modals/addFriendModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import {
   doc,
   writeBatch,
@@ -13,10 +14,16 @@ import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 
 import FriendItem from "./basic/friendItem";
 
+const group = 'group.com.mfollower';
+const SharedStorage = NativeModules.SharedStorage;
+
 
 const FriendsList = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [friendUIDList, setFriendsList] = useState([] as string[]);
+  const widgetData = {
+    friends: friendUIDList,
+  };
   const unsubscribeRef = useRef<() => void>(() => {});
 
   // NOTE:
@@ -53,8 +60,14 @@ const FriendsList = () => {
     if (!userId) {
       return;
     }
-    unsubscribeRef.current = onSnapshot(doc(FIREBASE_DB, "users", userId), (doc) => {
+    unsubscribeRef.current = onSnapshot(doc(FIREBASE_DB, "users", userId), async (doc) => {
       const friends = doc.data()?.friends || [];
+      try {
+        await SharedGroupPreferences.setItem('widgetKey', widgetData, group);
+      } catch (error) {
+        console.log({error});
+      }
+      SharedStorage.set(JSON.stringify(friends));
       setFriendsList(friends);
     });
   }

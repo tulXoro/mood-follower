@@ -48,6 +48,7 @@ public class FriendsListWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
+
     }
 
     @Override

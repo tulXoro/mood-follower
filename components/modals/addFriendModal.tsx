@@ -318,7 +318,7 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                 </Text>
                 <TextInput
                   className={`border p-2 rounded border-gray-300 bg-white text-black`}
-                  placeholder="Search for a user"
+                  placeholder="XXXX-XXXX-XXXX"
                   placeholderTextColor="darkgray"
                   value={searchTerm}
                   onChangeText={setSearchTerm}

@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import React, { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Svg, { Path } from "react-native-svg";
 
 import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
 import EmojiPickerModal from "./modals/emojiPickerModal";
@@ -43,11 +44,8 @@ const homeHeader = () => {
     }
   };
 
-
-
   const handleSetStatus = async (status: string) => {
     if (userId) {
-
       try {
         const userRef = doc(FIREBASE_DB, "users", userId);
         await updateDoc(userRef, { status: status });
@@ -85,16 +83,26 @@ const homeHeader = () => {
         </TouchableOpacity>
       </View>
 
-      <View className="">
+      <View className="flex flex-row items-center justify-center">
         <TextInput
           className="w-3/4 p-2 m-2 border-2 rounded-lg"
           placeholder="What's on your mind?"
           value={status}
-                  returnKeyType="send"
+          returnKeyType="send"
           onChangeText={setStatus}
         />
+
         <TouchableOpacity onPress={() => handleSetStatus(status)}>
-          <Text className="text-blue-900 dark:text-blue-300">Post</Text>
+          <Svg
+            width={24}
+            height={24}
+            viewBox="0 0 24 24"
+            fill="none"
+            transform={[{ scaleX: -1 }]}
+                   className="outline-dashed"
+          >
+            <Path  stroke="#000000" strokeWidth={2} d="M2 12L22 2L16 12L22 22L2 12Z" fill="#fff" />
+          </Svg>
         </TouchableOpacity>
       </View>
 
