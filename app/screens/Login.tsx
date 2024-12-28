@@ -8,9 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
 import { NavigationProp } from "@react-navigation/native";
-import {
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -26,12 +24,11 @@ const Login = ({ route, navigation }: LoginProps) => {
   const [loading, setLoading] = useState(false);
   const AUTH = FIREBASE_AUTH;
 
-
   const signIn = async () => {
     setLoading(true);
     try {
-        await signInWithEmailAndPassword(AUTH, email, password);
-        await syncData();
+      await signInWithEmailAndPassword(AUTH, email, password);
+      await syncData();
 
       alert("Check your email.");
     } catch (e) {
@@ -47,35 +44,40 @@ const Login = ({ route, navigation }: LoginProps) => {
       throw new Error("User ID is undefined");
     }
     try {
-      const storedDisplayName = await AsyncStorage.getItem("displayName");
-      const storedFriendPhrase = await AsyncStorage.getItem("friendPhrase");
-      const storedEmoji = await AsyncStorage.getItem("emoji");
-      const storedStatus = await AsyncStorage.getItem("status");
-
-
-
+      // const storedDisplayName = await AsyncStorage.getItem("displayName");
+      // const storedFriendPhrase = await AsyncStorage.getItem("friendPhrase");
+      // const storedEmoji = await AsyncStorage.getItem("emoji");
+      // const storedStatus = await AsyncStorage.getItem("status");
 
       const userDoc = await getDoc(doc(FIREBASE_DB, "users", userId));
       await AsyncStorage.setItem("displayName", userDoc.data()?.displayName);
       await AsyncStorage.setItem("friendPhrase", userDoc.data()?.friendPhrase);
       await AsyncStorage.setItem("emoji", userDoc.data()?.emoji);
       await AsyncStorage.setItem("status", userDoc.data()?.status);
-
-
     } catch (e: any) {
       alert("Error: " + e.message);
-    }}
+    }
+  };
 
   return (
     <View>
-      <KeyboardAvoidingView behavior="padding">
+      <KeyboardAvoidingView
+        className="grid col-1 items-center gap-1 align-middle justify-center"
+        behavior="padding"
+      >
+        <Text className="bg-transparent">Login</Text>
+
+        <Text>Email</Text>
         <TextInput
+          className="h-12 w-72 p-2 m-2 rounded-full items-center self-center bg-white dark:bg-gray-800"
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
         />
+        <Text>Password</Text>
         <TextInput
+          className="h-12 w-72 p-2 m-2 rounded-full items-center self-center bg-white dark:bg-gray-800"
           placeholder="Password"
           value={password}
           onChangeText={setPassword}

@@ -31,12 +31,18 @@ const Register = ({ route, navigation }: RegisterProps) => {
   const [email, setEmail] = useState(pemail);
   const [password, setPassword] = useState(ppassword);
   const [displayName, setDisplayName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const AUTH = FIREBASE_AUTH;
   const DB = FIREBASE_DB;
 
   const signUp = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await createUserWithEmailAndPassword(
@@ -95,20 +101,38 @@ const Register = ({ route, navigation }: RegisterProps) => {
   return (
     <View>
       <KeyboardAvoidingView behavior="padding">
+        <Text>Register</Text>
+
+        <Text>Email</Text>
         <TextInput
+          className="h-12 w-72 p-2 m-2 items-center self-center bg-white dark:bg-gray-800"
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
         />
+        <Text>Password</Text>
         <TextInput
+          className="h-12 w-72 p-2 m-2 items-center self-center bg-white dark:bg-gray-800"
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           autoCapitalize="none"
           secureTextEntry={true}
         />
+        <Text>Confirm Password</Text>
         <TextInput
+          className="h-12 w-72 p-2 m-2 items-center self-center bg-white dark:bg-gray-800"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          autoCapitalize="none"
+          secureTextEntry={true}
+        />
+
+        <Text>Display Name</Text>
+        <TextInput
+          className="h-12 w-72 p-2 m-2 items-center self-center bg-white dark:bg-gray-800"
           placeholder="Enter a display name!"
           value={displayName}
           onChangeText={setDisplayName}

@@ -33,7 +33,6 @@ const friendItem = ({ uid, removeFriend }: friendItemProps) => {
     fetchDetails();
 
     return () => {
-
       unsubscribeRef.current();
     };
   }, []);
