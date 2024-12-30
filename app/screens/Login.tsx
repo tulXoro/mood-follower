@@ -4,6 +4,7 @@ import {
   TextInput,
   Button,
   KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
@@ -25,6 +26,12 @@ const Login = ({ route, navigation }: LoginProps) => {
   const AUTH = FIREBASE_AUTH;
 
   const signIn = async () => {
+
+    if (!email || !password) {
+      alert("Email and password are required.");
+      return;
+    }
+
     setLoading(true);
     try {
       await signInWithEmailAndPassword(AUTH, email, password);
@@ -60,45 +67,54 @@ const Login = ({ route, navigation }: LoginProps) => {
   };
 
   return (
-    <View>
+    <View className="flex flex-col h-full pt-32 bg-white dark:bg-black">
       <KeyboardAvoidingView
-        className="grid col-1 items-center gap-1 align-middle justify-center"
+        className="grid col-1 items-center align-middle justify-center gap-5"
         behavior="padding"
       >
-        <Text className="bg-transparent">Login</Text>
 
-        <Text>Email</Text>
+        <View>
+        <Text className="text-black dark:text-white" >Email</Text>
         <TextInput
-          className="h-12 w-72 p-2 m-2 rounded-full items-center self-center bg-white dark:bg-gray-800"
+          className="h-12 w-72 p-2 my-2 rounded-sm items-center self-center bg-white dark:bg-gray-700 text-black dark:text-white"
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
         />
-        <Text>Password</Text>
+        </View>
+
+        <View>
+
+
+        <Text className="text-black dark:text-white" >Password</Text>
         <TextInput
-          className="h-12 w-72 p-2 m-2 rounded-full items-center self-center bg-white dark:bg-gray-800"
+          className="h-12 w-72 p-2 my-2 rounded-sm items-center self-center bg-white dark:bg-gray-700 text-black dark:text-white"
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           autoCapitalize="none"
           secureTextEntry={true}
         />
+        </View>
 
         {loading ? (
           <Text>Loading...</Text>
         ) : (
           <>
-            <Button title="Login" onPress={signIn} />
-            <Button
-              title="Sign Up"
+            <TouchableOpacity onPress={signIn}>
+              <Text className="text-black dark:text-white" >Sign In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() =>
                 navigation.navigate("Register", {
                   pemail: email,
                   ppassword: password,
                 })
               }
-            />
+            >
+              <Text className="text-black dark:text-white">Sign Up</Text>
+            </TouchableOpacity>
           </>
         )}
       </KeyboardAvoidingView>

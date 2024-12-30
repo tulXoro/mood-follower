@@ -65,7 +65,7 @@ export default function App() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <NavigationContainer>
-        {/* <StatusBar style="auto" /> */}
+        <StatusBar style="auto" />
         <Stack.Navigator>
           {user ? (
             <Stack.Screen

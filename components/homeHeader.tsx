@@ -62,21 +62,22 @@ const homeHeader = () => {
   }, []);
 
   return (
-    <View className="flex justify-start items-center p-8 min-h-15">
-      <Text className="text-2xl text-blue-900 dark:text-blue-300">
+    <View className="flex justify-start items-center p-8 min-h-15 bg-sky-400">
+      {/* dark:text-blue-900 */}
+      <Text className="text-2xl text-sky-900 mt-10 ">
         How are you feeling today?
       </Text>
-      <View className="relative items-center mt-5">
+      <View className="relative items-center mt-3">
         <TouchableOpacity
           onPress={() => setShowEmoji(true)}
-          className="p-2 m-2 rounded-full items-center self-center bg-transparent"
+          className="p-2 pt-6 m-2 rounded-full items-center self-center bg-orange-50 border-2 border-dashed"
         >
           <Text className="text-8xl text-black p-4">
-            {mood || "Pick an emoji"}
+            {mood || "Pick a mood!"}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="absolute bottom-5 right-5 bg-purple-700 dark:bg-purple-500 rounded-full w-12 h-12 justify-center items-center"
+          className="absolute bottom-3 right-3 bg-sky-500 rounded-full w-12 h-12 justify-center items-center border-2 border-blue-900"
           onPress={() => setShowEmoji(true)}
         >
           <Text className="text-white text-2xl">✏️</Text>
