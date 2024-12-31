@@ -19,6 +19,7 @@ import Login from "./app/screens/Login";
 import Register from "./app/screens/Register";
 import Home from "./app/screens/Home";
 import Settings from "./app/screens/Settings";
+import React from "react";
 
 
 const Stack = createNativeStackNavigator();
