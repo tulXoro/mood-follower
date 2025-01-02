@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, FlatList, NativeModules } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 
-import AddFriendModal from "./modals/addFriendModal";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import {
@@ -19,7 +19,7 @@ const SharedStorage = NativeModules.SharedStorage;
 
 
 const FriendsList = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+
   const [friendUIDList, setFriendsList] = useState([] as string[]);
   const widgetData = {
     friends: friendUIDList,
@@ -85,26 +85,25 @@ const FriendsList = () => {
   );
 
   return (
-    <View className="w-full p-3 bg-sky-400 dark:bg-gray-800">
-      <Text className="text-black dark:text-white">Contacts</Text>
+    // dark:bg-gray-800
+    <View className="w-full p-3 h-full bg-white dark:bg-gray-800">
+      <Text className="text-black dark:text-white ">Contacts</Text>
 
-      <FlatList
-        data={friendUIDList.map(uid => ({ uid }))}
-        keyExtractor={(item) => item.uid}
-        renderItem={renderItem}
-      />
+      {
+        friendUIDList.length > 0 ? (
+          <FlatList
+            data={friendUIDList.map((uid) => ({ uid }))}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.uid}
+          />
+        ) : (
+          <Text className="text-gray-600 justify-center text-center p-10">No friends yet! Add a friend to see them here!</Text>
+        )
 
-      <TouchableOpacity
-        className="bg-blue-500 p-2 m-2 rounded-md"
-        onPress={() => setModalVisible(true)}
-      >
-        <Text className="text-white">Add Contact</Text>
-      </TouchableOpacity>
+        
+      }
 
-      <AddFriendModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
+
     </View>
   );
 };

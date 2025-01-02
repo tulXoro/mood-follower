@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TouchableOpacity } from "react-native";
 import React, { useEffect } from "react";
 
 import { NavigationProp } from "@react-navigation/native";
@@ -12,6 +12,8 @@ import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
 
 import TestWidget from "../../components/testWidget";
 
+import AddFriendModal from "../../components/modals/addFriendModal";
+
 interface HomeProps {
   navigation: NavigationProp<any, any>;
 }
@@ -19,6 +21,7 @@ interface HomeProps {
 const Home = ({ navigation }: HomeProps) => {
   const [friends, setFriends] = React.useState<string[]>([]);
   const [loadingFriends, setLoadingFriends] = React.useState(true);
+  const [friendModalVisible, setFriendModalVisible] = React.useState(false);
 
   const syncData = async () => {
     const userId = FIREBASE_AUTH.currentUser?.uid;
@@ -35,14 +38,35 @@ const Home = ({ navigation }: HomeProps) => {
   return (
     <View>
       <HomeHeader />
-      <Button
+
+      <View className="flex-row gap-10 justify-center dark:bg-gray-900">
+      <TouchableOpacity
+        className="p-2 bg-gray-200 w-1/3 dark:bg-gray-800"
+        onPress={() => setFriendModalVisible(true)}
+      >
+        <Text className=" text-black dark:text-white">Add Friend</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="p-2 bg-gray-200 w-1/3 dark:bg-gray-800"
         onPress={() => navigation.navigate("Settings")}
-        title="Go to Settings"
-      />
+      >
+        <Text className=" text-black dark:text-white">Settings</Text>
+
+      </TouchableOpacity>
+
+
+      </View>
+
+
       <FriendsList />
 
 
-      <TestWidget />
+      {/* <TestWidget /> */}
+
+      <AddFriendModal
+        visible={friendModalVisible}
+        onClose={() => setFriendModalVisible(false)}
+      />
     </View>
   );
 };

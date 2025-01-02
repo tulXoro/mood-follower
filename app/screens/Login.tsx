@@ -78,6 +78,7 @@ const Login = ({ route, navigation }: LoginProps) => {
         <TextInput
           className="h-12 w-72 p-2 my-2 rounded-sm items-center self-center bg-white dark:bg-gray-700 text-black dark:text-white"
           placeholder="Email"
+          placeholderTextColor={"#808080"}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -91,6 +92,7 @@ const Login = ({ route, navigation }: LoginProps) => {
         <TextInput
           className="h-12 w-72 p-2 my-2 rounded-sm items-center self-center bg-white dark:bg-gray-700 text-black dark:text-white"
           placeholder="Password"
+          placeholderTextColor={"#808080"}
           value={password}
           onChangeText={setPassword}
           autoCapitalize="none"
