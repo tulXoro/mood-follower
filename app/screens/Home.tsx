@@ -41,16 +41,16 @@ const Home = ({ navigation }: HomeProps) => {
 
       <View className="flex-row gap-10 justify-center dark:bg-gray-900">
       <TouchableOpacity
-        className="p-2 bg-gray-200 w-1/3 dark:bg-gray-800"
+        className="p-2 w-1/3 "
         onPress={() => setFriendModalVisible(true)}
       >
-        <Text className=" text-black dark:text-white">Add Friend</Text>
+        <Text className=" text-black dark:text-white text-center">Add Friend</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        className="p-2 bg-gray-200 w-1/3 dark:bg-gray-800"
+        className="p-2  w-1/3 "
         onPress={() => navigation.navigate("Settings")}
       >
-        <Text className=" text-black dark:text-white">Settings</Text>
+        <Text className=" text-black dark:text-white text-center">Settings</Text>
 
       </TouchableOpacity>
 
