@@ -7,6 +7,7 @@ import {
   Button,
   FlatList,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import {
@@ -55,6 +56,11 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
 
     if (friendPhrase === searchTerm) {
       alert("You cannot add yourself as a friend.");
+      return;
+    }
+
+    if(searchTerm.length < 5) {
+      alert("Please enter a valid friend phrase.");
       return;
     }
 
@@ -266,11 +272,9 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View
-        className={`flex-1 justify-center items-center bg-gray-800 bg-opacity-50`}
-      >
-        <View className={`p-4 rounded-lg w-11/12 bg-white`}>
-          <Text className={`text-lg font-bold mb-4 text-black`}>
+      <View className={`flex-1 justify-center items-center bg-gray-800/50`}>
+        <View className={`p-4 rounded-lg w-11/12 bg-white dark:bg-zinc-900`}>
+          <Text className={`text-lg font-bold mb-4 text-black dark:text-white`}>
             Add Contacts
           </Text>
 
@@ -278,7 +282,9 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
             <TouchableOpacity onPress={() => setActiveTab("addFriend")}>
               <Text
                 className={`text-base font-semibold ${
-                  activeTab === "addFriend" ? "text-blue-500" : "text-gray-500"
+                  activeTab === "addFriend"
+                    ? "text-blue-500 dark:text-blue-300"
+                    : "text-gray-500 dark:text-gray-400"
                 }`}
               >
                 Add Friend
@@ -289,8 +295,8 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
               <Text
                 className={`text-base font-semibold ${
                   activeTab === "pendingRequests"
-                    ? "text-blue-500"
-                    : "text-gray-500"
+                    ? "text-blue-500 dark:text-blue-300"
+                    : "text-gray-500 dark:text-gray-400"
                 }`}
               >
                 Pending Requests
@@ -301,8 +307,8 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
               <Text
                 className={`text-base font-semibold ${
                   activeTab === "pendingInvites"
-                    ? "text-blue-500"
-                    : "text-gray-500"
+                    ? "text-blue-500 dark:text-blue-300"
+                    : "text-gray-500 dark:text-gray-400"
                 }`}
               >
                 Pending Invites
@@ -313,9 +319,12 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
           <View className="p-6">
             {activeTab === "addFriend" && (
               <View className="mb-4">
-                <Text className={`text-base font-semibold mb-2 text-black`}>
+                <Text
+                  className={`text-base font-semibold mb-2 text-black dark:text-white`}
+                >
                   Add Friend
                 </Text>
+                <KeyboardAvoidingView>
                 <TextInput
                   className={`border p-2 rounded border-gray-300 bg-white text-black`}
                   placeholder="XXXX-XXXX-XXXX"
@@ -324,6 +333,8 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                   onChangeText={setSearchTerm}
                   onSubmitEditing={handleSearch}
                 />
+                </KeyboardAvoidingView>
+
                 <TouchableOpacity
                   onPress={handleSearch}
                   className="mt-2 bg-blue-500 p-2 rounded"
@@ -341,61 +352,74 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
 
             {activeTab === "pendingRequests" && (
               <View className="mb-4">
-                <Text className={`text-base font-semibold mb-2 text-black`}>
+                <Text
+                  className={`text-base font-semibold mb-2 text-black dark:text-white`}
+                >
                   Pending Requests
                 </Text>
-                <FlatList
-                  data={pendingRequests}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <View>
-                      <Text
-                        className={`p-2 border-b border-gray-300 text-black`}
-                      >
-                        {item.displayName}
-                      </Text>
-                      <View className="flex-row justify-around">
-                        <Button
-                          title="Accept"
-                          onPress={() => acceptFriendRequest(item.uid)}
-                        />
-                        <Button
-                          title="Reject"
-                          onPress={() => rejectFriendInvite(item.uid)}
-                        />
+                {pendingRequests.length > 0 ? (
+                  <FlatList
+                    data={pendingRequests}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <View>
+                        <Text
+                          className={`p-2 border-b border-gray-300 text-black dark:text-white`}
+                        >
+                          {item.displayName}
+                        </Text>
+                        <View className="flex-row justify-around">
+                          <Button
+                            title="Accept"
+                            onPress={() => acceptFriendRequest(item.uid)}
+                          />
+                          <Button
+                            title="Reject"
+                            onPress={() => rejectFriendInvite(item.uid)}
+                          />
+                        </View>
                       </View>
-                    </View>
-                  )}
-                />
+                    )}
+                  />
+                ) : (
+                  <Text className="text-black dark:text-white">No pending requests.</Text>
+                )}
               </View>
             )}
 
             {activeTab === "pendingInvites" && (
               <View className="mb-4">
-                <Text className={`text-base font-semibold mb-2 'text-black'`}>
+                <Text
+                  className={`text-base font-semibold mb-2 text-black dark:text-white`}
+                >
                   Pending Invites
                 </Text>
-                <FlatList
-                  data={pendingInvites}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <View className="grid">
-                      <Text
-                        className={`p-2 border-b border-gray-300 text-black`}
-                      >
-                        {item.displayName}
-                      </Text>
-                      <TouchableOpacity
-                        className="bg-slate-500"
-                        onPress={() => cancelFriendRequest(item.uid)}
-                      >
-                        <Text className="text-red-500 text-center justify-end">
-                          Cancel
+                {
+                  pendingInvites.length > 0 ? (
+                    <FlatList
+                    data={pendingInvites}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <View className="grid">
+                        <Text
+                          className={`p-2 border-b border-gray-300 text-black dark:text-white`}
+                        >
+                          {item.displayName}
                         </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                />
+                        <TouchableOpacity
+                          className="bg-slate-500"
+                          onPress={() => cancelFriendRequest(item.uid)}
+                        >
+                          <Text className="text-red-500 text-center justify-end">
+                            Cancel
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  />) : (
+                    <Text className="text-black dark:text-white">No pending invites.</Text>
+                  )
+                }
               </View>
             )}
           </View>
