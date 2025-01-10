@@ -1,19 +1,17 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useRef } from "react";
-import { onSnapshot, doc } from "firebase/firestore";
-
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { doc, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "../../firebaseConfig";
 
 interface friendItemProps {
   uid: string;
-
   removeFriend: (uid: string) => void;
 }
 
 const friendItem = ({ uid, removeFriend }: friendItemProps) => {
-  const [name, setName] = React.useState("");
-  const [emoji, setEmoji] = React.useState("");
-  const [status, setStatus] = React.useState("");
+  const [name, setName] = useState("");
+  const [emoji, setEmoji] = useState("");
+  const [status, setStatus] = useState("");
   const unsubscribeRef = useRef<() => void>(() => {});
 
   const fetchDetails = async () => {
@@ -37,19 +35,34 @@ const friendItem = ({ uid, removeFriend }: friendItemProps) => {
     };
   }, []);
 
+  const confirmRemoveFriend = () => {
+    Alert.alert(
+      "Remove Friend",
+      `Are you sure you want to remove ${name}?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Remove",
+          onPress: () => removeFriend(uid),
+          style: "destructive",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
-    <View>
-      <Image />
-      <Text>{name}</Text>
+    <View className="flex p-4 bg-neutral-300 m-2 rounded-lg gap-1">
+      <Text className="text-wrap underline">{name}</Text>
       <Text>{emoji}</Text>
       <Text>{status}</Text>
-      <Text></Text>
       <TouchableOpacity
-        onPress={() => {
-          removeFriend(uid);
-        }}
+        onPress={confirmRemoveFriend}
       >
-        <Text>Remove</Text>
+        <Text>Remove Friend</Text>
       </TouchableOpacity>
     </View>
   );

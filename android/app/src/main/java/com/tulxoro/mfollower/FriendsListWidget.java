@@ -25,16 +25,21 @@ public class FriendsListWidget extends AppWidgetProvider {
         // // Instruct the widget manager to update the widget
         // appWidgetManager.updateAppWidget(appWidgetId, views);
 
-        try {
-            SharedPreferences sharedPref = context.getSharedPreferences("DATA", Context.MODE_PRIVATE);
-            String appString = sharedPref.getString("appData", "{\"text\": 'no data'}");
-            JSONObject appData = new JSONObject(appString);
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.friends_list_widget);
-            views.setTextViewText(R.id.appwidget_text, appData.getString("text"));
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     SharedPreferences sharedPref = context.getSharedPreferences("DATA", Context.MODE_PRIVATE);
+        //     String appString = sharedPref.getString("appData", "{\"text\": 'no data'}");
+        //     JSONObject appData = new JSONObject(appString);
+        //     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.friends_list_widget);
+        //     views.setTextViewText(R.id.appwidget_text, appData.getString("text"));
+        //     appWidgetManager.updateAppWidget(appWidgetId, views);
+        // } catch (JSONException e) {
+        //     e.printStackTrace();
+        // }
+
+        // just temporarilt say widget unavailable
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.friends_list_widget);
+        views.setTextViewText(R.id.appwidget_text, "Widget Unavailable");
+        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override

@@ -342,7 +342,7 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                   <Text className="text-white text-center">Search</Text>
                 </TouchableOpacity>
                 {searchResult && (
-                  <View className="mt-4">
+                  <View className="mt-4 bg-slate-400 p-3 gap-2 dark:bg-blue-900">
                     <Text className="text-black">{searchResult}</Text>
                     <Button title="Add Friend" onPress={handleInviteFriend} />
                   </View>
@@ -362,13 +362,13 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                     data={pendingRequests}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
-                      <View>
+                      <View className="bg-slate-400 p-3 gap-2 dark:bg-blue-900">
                         <Text
                           className={`p-2 border-b border-gray-300 text-black dark:text-white`}
                         >
                           {item.displayName}
                         </Text>
-                        <View className="flex-row justify-around">
+                        <View className="flex-row justify-around ">
                           <Button
                             title="Accept"
                             onPress={() => acceptFriendRequest(item.uid)}
@@ -400,14 +400,14 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                     data={pendingInvites}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
-                      <View className="grid">
+                      <View className="grid bg-slate-400 p-3 gap-2 dark:bg-blue-900">
                         <Text
                           className={`p-2 border-b border-gray-300 text-black dark:text-white`}
                         >
                           {item.displayName}
                         </Text>
                         <TouchableOpacity
-                          className="bg-slate-500"
+                          className="bg-slate-500 dark:bg-slate-200"
                           onPress={() => cancelFriendRequest(item.uid)}
                         >
                           <Text className="text-red-500 text-center justify-end">
