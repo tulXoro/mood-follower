@@ -105,13 +105,11 @@ const emojiPickerModal = ({ visible, onClose, onSelectEmoji }: EmojiPickerModalP
             contentContainerStyle={{ paddingBottom: 4 }}
           />
         </View>
-        <ScrollView
-          contentContainerStyle={{ alignItems: "center" }}
-          className="flex-1 w-full mt-2"
-        >
+
+        <View className="flex-1 w-full mt-2 p-8">
           <FlatList
             data={filteredEmojis}
-            numColumns={8}
+            numColumns={6}
             keyExtractor={(item) => item.emoji}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -121,9 +119,10 @@ const emojiPickerModal = ({ visible, onClose, onSelectEmoji }: EmojiPickerModalP
                 <Text className="text-2xl">{item.emoji}</Text>
               </TouchableOpacity>
             )}
-            scrollEnabled={false} // Disable scrolling in FlatList to use ScrollView
+
           />
-        </ScrollView>
+        </View>
+
         <TouchableOpacity
           onPress={() => {
             setSelectedEmoji("");
