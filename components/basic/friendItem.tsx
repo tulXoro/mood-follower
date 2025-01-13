@@ -55,14 +55,14 @@ const friendItem = ({ uid, removeFriend }: friendItemProps) => {
   };
 
   return (
-    <View className="flex p-4 bg-neutral-300 m-2 rounded-lg gap-1">
-      <Text className="text-wrap underline">{name}</Text>
+    <View className="flex p-4 bg-neutral-300 m-2 rounded-lg gap-1 ">
+      <Text className="text-wrap underline font-extrabold">{name}</Text>
       <Text>{emoji}</Text>
       <Text>{status}</Text>
       <TouchableOpacity
         onPress={confirmRemoveFriend}
       >
-        <Text>Remove Friend</Text>
+        <Text className="text-right text-red-600">Remove Friend</Text>
       </TouchableOpacity>
     </View>
   );

@@ -32,34 +32,32 @@ const Home = ({ navigation }: HomeProps) => {
 
   useEffect(() => {
     syncData();
-
   }, []);
 
   return (
     <View>
       <HomeHeader />
 
-      <View className="flex-row gap-10 justify-center dark:bg-gray-900">
-      <TouchableOpacity
-        className="p-2 w-1/3 "
-        onPress={() => setFriendModalVisible(true)}
-      >
-        <Text className=" text-black dark:text-white text-center">Add Friend</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        className="p-2  w-1/3 "
-        onPress={() => navigation.navigate("Settings")}
-      >
-        <Text className=" text-black dark:text-white text-center">Settings</Text>
-
-      </TouchableOpacity>
-
-
+      <View className="flex-row justify-center dark:bg-gray-900 bg-slate-200 w-screen">
+        <TouchableOpacity
+          className="p-2 w-1/2 rounded-tl-lg rounded-bl-lg border-2 border-r-0"
+          onPress={() => setFriendModalVisible(true)}
+        >
+          <Text className=" text-black dark:text-white text-center">
+            Add Friend
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="p-2 w-1/2 rounded-tr-lg rounded-br-lg border-2"
+          onPress={() => navigation.navigate("Settings")}
+        >
+          <Text className=" text-black dark:text-white text-center ">
+            Settings
+          </Text>
+        </TouchableOpacity>
       </View>
 
-
       <FriendsList />
-
 
       {/* <TestWidget /> */}
 

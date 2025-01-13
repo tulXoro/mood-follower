@@ -62,7 +62,7 @@ const homeHeader = () => {
   }, []);
 
   return (
-    <View className="flex justify-start items-center p-8 min-h-15 bg-sky-400 dark:bg-zinc-800">
+    <View className="flex justify-start items-center p-8 min-h-15 bg-emerald-400 dark:bg-zinc-800">
       {/* dark:text-blue-900 */}
       <Text className="text-2xl text-sky-900 mt-10 dark:text-white">
         How are you

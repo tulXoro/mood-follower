@@ -87,7 +87,7 @@ const FriendsList = () => {
   return (
     // dark:bg-gray-800
     <View className="w-full p-3 h-full bg-white dark:bg-gray-800">
-      <Text className="text-black dark:text-white ">Contacts</Text>
+      <Text className="text-black dark:text-white pt-2 font-bold text-lg">Contacts</Text>
 
       {
         friendUIDList.length > 0 ? (

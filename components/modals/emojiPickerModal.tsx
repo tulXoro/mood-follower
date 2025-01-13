@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from "react-native";
 import emojiData from "emoji-datasource";
-
+// bottom of emoji picker modal kind of clips the last row of emojis
 interface EmojiPickerModalProps {
   visible: boolean;
   onClose: () => void;
@@ -66,14 +66,14 @@ const emojiPickerModal = ({
         className="flex-1 justify-center items-center"
         style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
       >
-        <View className={`w-11/12 h-3/4 rounded-lg p-4 bg-slate-300 dark:bg-neutral-700 gap-1`}>
+        <View
+          className={`w-11/12 h-3/4 rounded-lg p-4 bg-slate-300 dark:bg-neutral-700 gap-1`}
+        >
           <View className="items-center justify-center h-16">
             {selectedEmoji ? (
               <Text className="text-4xl text-center">{selectedEmoji}</Text>
             ) : (
-              <Text
-                className={`text-4xl text-center text-red-950 bg-slate-600 p-3 rounded-3xl`}
-              >
+              <Text className={`text-4xl text-center p-3 rounded-3xl`}>
                 No Emoji Selected
               </Text>
             )}
@@ -84,7 +84,7 @@ const emojiPickerModal = ({
             onChangeText={setSearchQuery}
             className={`w-full p-2 mb-2 rounded bg-gray-200 dark:bg-neutral-600 text-black dark:text-white`}
           />
-          <View className="h-12">
+          <View className="h-12 bg-transparent">
             <FlatList
               data={categoryNames}
               horizontal
@@ -93,7 +93,7 @@ const emojiPickerModal = ({
                 <TouchableOpacity
                   onPress={() => setSelectedCategory(item)}
                   className={`p-2 m-1 rounded ${
-                    item === selectedCategory ? "bg-blue-500" : "bg-gray-200"
+                    item === selectedCategory ? "bg-emerald-400" : "bg-gray-200"
                   }`}
                 >
                   <Text className={`text-xs text-black`}>{item}</Text>
@@ -104,16 +104,17 @@ const emojiPickerModal = ({
             />
           </View>
 
-          <View className="flex-1 w-full p-1 items-center">
+          <View className="flex-1 w-full items-center ">
             <FlatList
+              className="bg-gray-400 p-4 rounded-xl"
               data={filteredEmojis}
               numColumns={6}
               keyExtractor={(item) => item.emoji}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => setSelectedEmoji(item.emoji)}
-                  className={`m-1 p-2 rounded ${
-                    item.emoji === selectedEmoji ? "bg-blue-200" : ""
+                  className={`mb-2 m-1 p-2 rounded-lg ${
+                    item.emoji === selectedEmoji ? "bg-green-200" : ""
                   }`}
                 >
                   <Text className="text-2xl">{item.emoji}</Text>
@@ -122,24 +123,27 @@ const emojiPickerModal = ({
             />
           </View>
 
+          <View className="flex flex-row justify-center items-center gap-6">
           <TouchableOpacity
-            onPress={() => {
-              setSelectedEmoji("");
-              onClose();
-            }}
-            className="mt-2 p-2 bg-blue-500 rounded-full w-24 items-center self-center"
-          >
-            <Text className="text-white text-base">Close</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              onSelectEmoji(selectedEmoji);
-              onClose();
-            }}
-            className="mt-2 p-2 bg-green-500 rounded-full w-24 items-center self-center"
-          >
-            <Text className="text-white text-base">Select</Text>
-          </TouchableOpacity>
+              onPress={() => {
+                onSelectEmoji(selectedEmoji);
+                onClose();
+              }}
+              className="mt-2 p-2 bg-green-500 rounded-full w-24 items-center self-center"
+            >
+              <Text className="text-white text-base">Select</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedEmoji("");
+                onClose();
+              }}
+              className="mt-2 p-2 bg-blue-500 rounded-full w-24 items-center self-center"
+            >
+              <Text className="text-white text-base">Close</Text>
+            </TouchableOpacity>
+
+          </View>
         </View>
       </View>
     </Modal>
