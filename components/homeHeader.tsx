@@ -86,8 +86,8 @@ const homeHeader = () => {
 
       <View className="flex flex-row items-center justify-center">
         <TextInput
-        // dark:bg-gray-700 dark:text-white
-          className="w-3/4 p-2 m-2 border-2 rounded-lg bg-white text-black  dark:bg-gray-700 dark:text-white"
+          // dark:bg-gray-700 dark:text-white
+          className="w-3/4 p-2 m-2 border-2 rounded-lg bg-white text-black dark:bg-gray-700 dark:text-white"
           placeholder="What's on your mind?"
           placeholderTextColor={"#808080"}
           value={status}
@@ -102,9 +102,14 @@ const homeHeader = () => {
             viewBox="0 0 24 24"
             fill="none"
             transform={[{ scaleX: -1 }]}
-                   className="outline-dashed"
+            className="outline-dashed"
           >
-            <Path  stroke="#000000" strokeWidth={2} d="M2 12L22 2L16 12L22 22L2 12Z" fill="#808080" />
+            <Path
+              stroke="#000000"
+              strokeWidth={2}
+              d="M2 12L22 2L16 12L22 22L2 12Z"
+              fill="#808080"
+            />
           </Svg>
         </TouchableOpacity>
       </View>

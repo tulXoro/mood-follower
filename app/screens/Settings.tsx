@@ -29,8 +29,8 @@ const Settings = ({ navigation }: SettingsProps) => {
   }, []);
 
   return (
-    <View className="bg-white dark:bg-slate-800 h-screen p-6" >
-      <View className="flex flex-col items-center gap-2 p-2">
+    <View className="bg-emerald-200 dark:bg-slate-800 h-screen p-6" >
+      <View className="flex flex-col items-center gap-2 p-2 mt-10">
         <Text className="text-lg text-black dark:text-white">Display Name:</Text>
         <Text className="border p-2 text-black dark:text-white mb-10">{displayName}</Text>
         <Text className="text-lg text-black dark:text-white">Friend Phrase:</Text>
