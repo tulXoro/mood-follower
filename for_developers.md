@@ -6,4 +6,6 @@ Use Tailwind for colors
 - Secondary
     - light = `emerald-200`
 - Tertiary
-    - 
+    - light = `emerald-100`
+- Supp
+    - light = `emerald-600`

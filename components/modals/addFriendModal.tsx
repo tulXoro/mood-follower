@@ -49,6 +49,9 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
   const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
   const [activeTab, setActiveTab] = useState("addFriend");
 
+  const activeTabClass = "text-emerald-800 dark:text-blue-800 font-extrabold";
+  const inactiveTabClass = "text-gray-800 dark:text-gray-400";
+
   const userId = FIREBASE_AUTH.currentUser?.uid;
 
   const handleSearch = async () => {
@@ -59,7 +62,7 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
       return;
     }
 
-    if(searchTerm.length < 5) {
+    if (searchTerm.length < 5) {
       alert("Please enter a valid friend phrase.");
       return;
     }
@@ -273,42 +276,48 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
       onRequestClose={onClose}
     >
       <View className={`flex-1 justify-center items-center bg-gray-800/50`}>
-        <View className={`p-4 rounded-lg w-11/12 bg-white dark:bg-zinc-900`}>
-          <Text className={`text-lg font-bold mb-4 text-black dark:text-white`}>
-            Add Contacts
-          </Text>
+        <View
+          className={`p-4 rounded-lg w-11/12 bg-emerald-100 dark:bg-zinc-900`}
+        >
 
-          <View className="flex-row justify-around mb-4">
-            <TouchableOpacity onPress={() => setActiveTab("addFriend")}>
+          <View className="flex-row justify-center mb-4 border-2 rounded-full py-2 bg-emerald-200">
+            <TouchableOpacity
+              className="w-auto border-r-2 pr-2"
+              onPress={() => setActiveTab("addFriend")}
+            >
               <Text
-                className={`text-base font-semibold ${
-                  activeTab === "addFriend"
-                    ? "text-blue-500 dark:text-blue-300"
-                    : "text-gray-500 dark:text-gray-400"
+                className={`text-base rounded-l-full text-center  ${
+                  activeTab === "addFriend" ? activeTabClass : inactiveTabClass
                 }`}
               >
                 Add Friend
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setActiveTab("pendingRequests")}>
+            <TouchableOpacity
+              className="w-auto border-r-2 px-2"
+              onPress={() => setActiveTab("pendingRequests")}
+            >
               <Text
-                className={`text-base font-semibold ${
+                className={`text-base text-center ${
                   activeTab === "pendingRequests"
-                    ? "text-blue-500 dark:text-blue-300"
-                    : "text-gray-500 dark:text-gray-400"
+                    ? activeTabClass
+                    : inactiveTabClass
                 }`}
               >
                 Pending Requests
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setActiveTab("pendingInvites")}>
+            <TouchableOpacity
+              className="w-auto rounded-r-full pl-2"
+              onPress={() => setActiveTab("pendingInvites")}
+            >
               <Text
-                className={`text-base font-semibold ${
+                className={`text-base text-center ${
                   activeTab === "pendingInvites"
-                    ? "text-blue-500 dark:text-blue-300"
-                    : "text-gray-500 dark:text-gray-400"
+                    ? activeTabClass
+                    : inactiveTabClass
                 }`}
               >
                 Pending Invites
@@ -325,26 +334,28 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                   Add Friend
                 </Text>
                 <KeyboardAvoidingView>
-                <TextInput
-                  className={`border p-2 rounded border-gray-300 bg-white text-black`}
-                  placeholder="XXXX-XXXX-XXXX"
-                  placeholderTextColor="darkgray"
-                  value={searchTerm}
-                  onChangeText={setSearchTerm}
-                  onSubmitEditing={handleSearch}
-                />
+                  <TextInput
+                    className={`border p-2 rounded border-gray-300 bg-white text-black`}
+                    placeholder="XXXX-XXXX-XXXX"
+                    placeholderTextColor="darkgray"
+                    value={searchTerm}
+                    onChangeText={setSearchTerm}
+                    onSubmitEditing={handleSearch}
+                  />
                 </KeyboardAvoidingView>
 
                 <TouchableOpacity
                   onPress={handleSearch}
-                  className="mt-2 bg-blue-500 p-2 rounded"
+                  className="mt-2 bg-green-800 p-2 rounded"
                 >
                   <Text className="text-white text-center">Search</Text>
                 </TouchableOpacity>
                 {searchResult && (
                   <View className="mt-4 bg-slate-400 p-3 gap-2 dark:bg-blue-900">
                     <Text className="text-black">{searchResult}</Text>
-                    <Button title="Add Friend" onPress={handleInviteFriend} />
+                    <TouchableOpacity onPress={handleInviteFriend}>
+                      <Text>Invite</Text>
+                    </TouchableOpacity>
                   </View>
                 )}
               </View>
@@ -368,21 +379,25 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                         >
                           {item.displayName}
                         </Text>
-                        <View className="flex-row justify-around ">
-                          <Button
-                            title="Accept"
+                        <View className="flex-row justify-around">
+                          <TouchableOpacity
                             onPress={() => acceptFriendRequest(item.uid)}
-                          />
-                          <Button
-                            title="Reject"
+                          >
+                            <Text>Accept</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
                             onPress={() => rejectFriendInvite(item.uid)}
-                          />
+                          >
+                            <Text>Accept</Text>
+                          </TouchableOpacity>
                         </View>
                       </View>
                     )}
                   />
                 ) : (
-                  <Text className="text-black dark:text-white">No pending requests.</Text>
+                  <Text className="text-black dark:text-white">
+                    No pending requests.
+                  </Text>
                 )}
               </View>
             )}
@@ -394,9 +409,8 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                 >
                   Pending Invites
                 </Text>
-                {
-                  pendingInvites.length > 0 ? (
-                    <FlatList
+                {pendingInvites.length > 0 ? (
+                  <FlatList
                     data={pendingInvites}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
@@ -416,15 +430,22 @@ const addFriendModal = ({ visible, onClose }: AddFriendModalProps) => {
                         </TouchableOpacity>
                       </View>
                     )}
-                  />) : (
-                    <Text className="text-black dark:text-white">No pending invites.</Text>
-                  )
-                }
+                  />
+                ) : (
+                  <Text className="text-black dark:text-white">
+                    No pending invites.
+                  </Text>
+                )}
               </View>
             )}
           </View>
 
-          <Button title="Close" onPress={onClose} />
+          <TouchableOpacity
+            className="bg-emerald-300 border-2 rounded-md"
+            onPress={onClose}
+          >
+            <Text className="text-black text-center">Close</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
