@@ -23,7 +23,7 @@ import {
   setDoc,
   getDoc,
 } from "firebase/firestore";
-import { FIREBASE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIREBASE_DB, FIREBASE_AUTH } from "../../lib/firebaseConfig";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

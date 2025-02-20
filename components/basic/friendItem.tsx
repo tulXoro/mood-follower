@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { doc, onSnapshot } from "firebase/firestore";
-import { FIREBASE_DB } from "../../firebaseConfig";
+import { FIREBASE_DB } from "../../lib/firebaseConfig";
 import Svg, { Path } from "react-native-svg";
 
 interface friendItemProps {

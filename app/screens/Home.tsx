@@ -8,7 +8,7 @@ import HomeHeader from "../../components/homeHeader";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, getDoc } from "firebase/firestore";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../../lib/firebaseConfig";
 
 import TestWidget from "../../components/testWidget";
 

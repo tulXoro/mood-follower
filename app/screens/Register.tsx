@@ -6,7 +6,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../../lib/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   addDoc,

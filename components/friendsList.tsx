@@ -10,7 +10,7 @@ import {
   arrayRemove,
   onSnapshot,
 } from "firebase/firestore";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../firebaseConfig";
+import { FIREBASE_AUTH, FIREBASE_DB } from "../lib/firebaseConfig";
 
 import FriendItem from "./basic/friendItem";
 

@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { useColorScheme } from "nativewind";
 import { onAuthStateChanged, User } from "firebase/auth";
 
-import { FIREBASE_AUTH } from "./firebaseConfig";
+import { FIREBASE_AUTH } from "./lib/firebaseConfig";
 
 import "./global.css";
 
