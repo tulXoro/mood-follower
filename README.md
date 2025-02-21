@@ -16,5 +16,6 @@ Use this however you see fit.
 
 1. Clone the repository and change directory into it.
 2. Ensure NodeJS is installed, and run `npm i` to install necessary node packages.
-3. Run `npx expo run:android:` with an android emulator to try it.
+3. Create a Firebase application and create a new file in the `lib` folder with all the configuration settings.
+4. Run `npx expo run:android` with an android emulator to try it.
 
